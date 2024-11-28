@@ -2,7 +2,7 @@
 
 ## BASICS
 
-![Login Page](images/basic-evm.jpg)
+![Basic EVM representation](images/basic-evm.jpg)
 
 The Ethereum Virtual Machine (EVM) is a computation engine that executes smart contracts on EVM-compatible blockchains using a stack-based architecture and a turing-complete instruction set.
 
@@ -237,6 +237,61 @@ The bytecode checks the selector and jumps to the correct location in the progra
 - `CALLDATALOAD`: Load calldata at a specified offset;
 - `SHR`: Bit-shift data to isolate the function selector;
 - `JUMPI`: Conditionally jump to a function's bytecode based on selector match.
+
+<br>
+<br>
+
+## MEMORY DATA STRUCTURE
+
+The first 5 bytes of a contract runtime bytecode represent the initialisation of the “free memory pointer”:
+
+`6080604052`
+60 80 = `PUSH1` 0x80
+60 40 = `PUSH1` 0x40
+52 = `MSTORE`
+
+![EVM Memory](images/memory.png)
+
+This functionality is determined by the 3 opcodes that operate on memory.
+
+- MSTORE (x, y) - Store a 32 byte (256-bit) value “y” starting at memory location “x”;
+- MLOAD (x) - Load 32 bytes (256-bit) starting at memory location “x” onto the call stack;
+- MSTORE8 (x, y) - Store a 1 byte (8-bit) value “y” at memory location “x” (the least significant byte of the 32-byte stack value).
+
+[EVM Playground](<https://www.evm.codes/playground?unit=Wei&codeType=Mnemonic&code=%27Vg*(_I...1W0GJ_!!!!z00FK22WJQ0Y22z20F8K33W33Q1Y33z21F8d(v0Z0-Jq00Xd(vJZJ-64q20Xdv33Z33-65q21Xpp%27~N%20locatioCzG1_wppVv7o7hBcall%20stack%20from~uIIIIq(%20ofNzp%5Cnj%20bytegSTOREdw)*_%200xZ9BY9Chex%7DzXpM)W%20at~V%2F%2F%20MQ%20%7B0x2N%20memoryKwg8%201j_J32I11GpPUSHFpMgCn%20Be%209%20i7%20t*%20J)LOAD(js!uu%01!()*79BCFGIJKNQVWXYZ_dgjpquvwz~_>)
+
+### Memory Expansion
+
+- Memory expands in 32-byte increments when writing to a new memory area;
+- Costs are associated with:
+  - Number of bytes written;
+  - Expansion of previously untouched memory.
+- Cost Scaling:
+  - Linear scaling for the first 724 bytes;
+  - Quadratic scaling thereafter.
+
+### The Free Memory Pointer
+
+- A pointer to the location where free memory starts;
+- Prevents overwriting of already allocated memory;
+- When a variable is written to memory, the contract:
+  - References the free memory pointer for available space;
+  - Updates the pointer to reflect the new memory boundary.
+
+### Solidity’s Memory Layout
+
+- Solidity reserves specific memory slots:
+  - `0x00`–`0x3f` (64 bytes): Scratch space (temporary use, hashing, etc.);
+  - `0x40`–`0x5f` (32 bytes): Free memory pointer (start location of free memory);
+  - `0x60`–`0x7f` (32 bytes): Zero slot (used for dynamic arrays).
+- Solidity’s pre-defined layout explains why:
+  - The free memory pointer is initialized at `0x40`;
+  - Its initial value is `0x80` (the first available memory address after reserved slots).
+
+### Memory in Real Contract
+
+- Arrays are initialized with zero values using `CALLDATACOPY`
+- Solidity uses 32-byte increments even for arrays with smaller elements.
 
 <br>
 <br>
