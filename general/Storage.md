@@ -7,11 +7,11 @@
 - 2<sup>256</sup> is approximately the number of atoms in the known, observable universe. No computer can hold that much data. This is the reason setting a storage value to zero **refunds** you some gas as that key value no longer needs to be stored by the nodes on the network.
 - Conceptually storage can be viewed as an astronomically large array.
 
-![EVM Storage](images/storage.png)
+![EVM Storage](images/storage/storage.png)
 
 ### Slot Packing
 
-![Slot Packing](images/storage-slot-packing.png)
+![Slot Packing](images/storage/storage-slot-packing.png)
 
 ### EVM Storage Opcodes
 
