@@ -3,20 +3,20 @@
 **1. ERC-1363:**
 
 - An extension interface for ERC20 tokens;
+- Backwards Compatible;
 - Enables executing code on a recipient contract after `transfer` or `transferFrom`;
 - OR code on a spender contract after `approve`;
 - Single transaction;
-- Backwards Compatible;
 - Eliminates the need for pre-approving allowances and **reduces** the risk of granting excessive permissions;
 - `approveAndCall` and `transferAndCall` have the same transaction racing risk as `approve` and `transferFrom`, allowing misuse of both old and new allowances due to ordering issues.
 
 **2. ERC-777:**
 
-- Introduced in November, 2017 as an improvement over ERC20;
+- Introduced in November, 2017 as an extension over ERC20;
+- Backwards Compatible with 20 tokens;
 - Getting a transfer hook called, requires registering in ERC-1820 registry;
 - Quite gas consuming;
-- Not directly compatible with contracts expecting 20 tokens;
-- Attack vectors for reentrancy attacks.
+- Attack vectors for reentrancy [attacks](https://blog.openzeppelin.com/exploiting-uniswap-from-reentrancy-to-actual-profit).
 
 <br>
 
